@@ -1,6 +1,6 @@
 👋 Hi, I’m @sukhiahlu. I'm a writer, coder, thinker, but mostly a lazy man
-I’m interested in analysing data on sport, politics, people, health and culture. I am also interested in trading and creating games (eg chess, snake) for fun
-I’m looking to collaborate on anything in the above really, drop me a line (or read my blogs) below:
+- I’m interested in analysing data on sport, politics, people, health and culture. I am also interested in trading and creating games (eg chess, snake) for fun
+- I’m looking to collaborate on anything in the above really, drop me a line (or read my blogs) below:
 
 - 📫 Reach me on:
 - sukhiahlu@gmail.com
