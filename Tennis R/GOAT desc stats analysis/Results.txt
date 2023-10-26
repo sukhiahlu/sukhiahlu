@@ -1,0 +1,323 @@
+######### RATIOS TESTS TO SEE PLAYER PERFORMANCE
+# Hypothesis: players with high and consistent win-loss ratios over different years are the best
+# We use 3, 5, 7 and 9 year ranges to average out results over time - 
+# a player can have one fantastic year but to maintain a high win-loss ratio across x years 
+# and then to do that multiple times is signs of true genius
+# We use different win-loss ratios to tease out performances
+# - match, sets, games and ratios for wins and losses, also looking at straight-sets etc. Lets dive in:
+
+######### FINDINGS SUMMARY
+
+# Tennis is definitely surface dependent.
+
+# Nothing out of the ordinary here overall. The typical names come up.
+# - Only thing: McEnroe's dominance on Grass was slightly unexpected
+
+# Eras have become bigger in the times of Djok, Fed, Rafa. This has deflated
+
+# No GOAT emerges:
+# - Djokovic is the most complete player and ranks high mostly everwhere. 
+# - Fed misses out on Clay, Nadal on others. Murray is far behind but not too far
+# - Borg is close as is Connors, McEnroe, Lendl, Laver
+
+# Fed is amazing in losses across the board but is best by far of potential contenders for GOAT. 
+# - Other people who do well in losses are big servers, Isner, Karlovic et al
+
+# Alcaraz is rising. Too early to tell but he's doing well in many indicators.
+
+###SURFACE LEVEL SUMMARY
+
+CLAY: Nadal, Borg. Lendl, Djokovic, Courier, Carlsson, Vilas, Alcaraz (too early). In many spots, Nadal and Borg are big outliers
+
+GRASS: McEnroe, Fed. Djokovic, Sampras, Connors, Borg, Laver. McEnroe and Fed are further ahead than others too but not as much as Clay
+In Grass there is a small sample problem FYI
+
+HARD: Djokovic, Lendl, Fed, Connors. Sampras, Borg, Edberg, McEnroe. Nadal stays close. No outliers really. Top 4 is a good bunch 
+
+ALL SURFACES: Djok, Nadal, Fed, Borg. Lendl, Johnny Mac, Connors, Sampras, Laver. Alcaraz (too early?)
+
+######### ALL SURFACES
+# Findings
+# Djokovic has the best record, then Nadal, Fed and Borg
+# Fed is the best among these in losses, so he got a bump up to 3rd
+# Other notable: Lendl, Johnny Mac, Connors, Sampras, Laver. Alcaraz (too early?) 
+
+# MATCH WIN-LOSS RATIOS
+# Djokovic, Borg lead the roost - Borg better for 3 year window, Dok for others. Slight outlier
+# Federer, Nadal round out top 4 alternating places for different windows
+# Lendl, Johnny Mac, Connors, Sampras, Laver, Alcaraz(too early?) also feature a lot
+# Data: Decent dispersion - 7/8 pp, arguably no outliers but Djok / Borg are close
+
+# SETS WIN-LOSS RATIOS
+# V similar list to above. Fed does v well in 3 year window, slightly behind in others at 4
+# V little between the top 4, Fed slighlt dip at the 9 year window
+# Others still remain
+# Slight outlier for top 4, rest are in 5-6 pp in top 10
+
+# SETS WIN-LOSS RATIOS IN WINS
+# Again randoms rule the roost. Thierry Ascione, Jack Draper, Tony Graham, Givaldo Barbosa are super high
+# The regulars are closely bunched together, little separates. Nadal wins, Fed next then Djok, Borg, Lendl
+# Data: Few outlier high random folks. But good-ish dispersion after that
+
+# SETS WIN-LOSS RATIOS IN LOSSES
+# Fed wins here, top or thereabouts all the way through
+# Others: Alcaraz, Sampras, McEnroe, Laver all feature
+# Few randos (Halys), big servers in there - Isner. Others - Humbert, Zhang, Huesler, Santana etc
+# Djokovic, Nadal, Borg are fairly low all the way through
+# Data: Low dispersion- 2/3 pp between top 10
+
+# GAMES WIN-LOSS RATIOS
+# V little separate top 5, Borg wins, Djok, Nadal also up there. Carlsson, Connors up there
+# Lendl, McEnroe, Agassi, Fed are there but a bit behind
+# Data: Low dispersion- 2/3 pp between top 10 
+
+# GAMES WIN-LOSS RATIOS IN WINS
+# Again randoms rule the roost. Kent Carlsson, Allan McDonald, Jose Orilla
+# The regulars are closely bunched together, little separates. Borg wins, Nadal next then Lendl, Djok, Fed
+# Data: Low dispersion - 3/4 pp all the way through
+
+# GAMES WIN-LOSS RATIOS IN LOSSES
+# Big servers do well here. Halys, Isner, Karlovic, Sampras, Raonic
+# Fed is up there too - top 3, top 1 etc depend on window
+# Others are very close too. Borg slighltly behind. Djok comes next then Nadal then Borg
+# Data: V v v low dispersion - 1pp in top 20! Except Halys who can be outlier high in some windows
+
+# STRAIGHTS_WINS
+# V similar to Sets in Wins ratio data
+# Again randoms rule the roost. Thierry Ascione, Jack Draper, Tony Graham, Givaldo Barbosa are super high
+# The regulars are closely bunched together, little separates. Nadal wins, Fed next then Djok, Borg, Lendl
+# Data: Few outlier high random folks. But good-ish dispersion after that
+
+# STRAIGHTS_WINS_TOT
+# Nadal wins all the way through, Fed is 2nd in smaller windows but gets lower in bigger windows
+# Djok, Borg are close on the heels
+# Similar expected folks round out the list
+# V low dispersion- 3/4 pp
+
+# STRAIGHTS_LOSSES
+# Halys, Thomas Lejus do well, sometimes outlier well
+# Fed comes close, as does Alcaraz, Rune (too early?), Laver, Isner
+# Nadal, Djok, Borg are all behind
+# Data: Decent dispersion - 6/7pp in top 10, some outliers
+
+# STRAIGHTS_LOSSES_TOT
+# Fed is the winner all the way through with outlier high in some, 5 year window Djok has slight edge
+# Djok, then Alacaraz, Bor, Nadal
+# Usual suspects round out the list
+# Data: MEdium dispersion. 5-6 pp
+
+######### HARD
+# Findings:
+# Close competition between Winner is Djokovic, Lendl, Connors and Federer 
+# Novak Djokovic gets 1. He gets there in many of the imp ratios and close enough in other ratios
+# Lendl is close 2, and Fed is 3 especially because of his perfmance in Losses. Connors is close 4th
+# Other notable folks: Sampras, Borg, Edberg, McEnroe. Nadal stays close
+# Data: Games' ratios are much less dispersed than Sets. Sets tend to also be less dispersed for Wins/Losses
+
+# MATCH WIN-LOSS RATIOS
+# Djokovic, Lendl, Fed are at the top and close. Djok has slight edge
+# Connors, Sampras, McEnroe, Laver, Borg, Edberg, Agassi, Wilander also feature
+# Murray, Nadal are close enough
+# Data: Decent dispersion, no particular outlier but a spread of 10ish pp.. Djok slight edge in some but it tosses around
+
+# SETS WIN-LOSS RATIOS
+# V v similar to Matches - similar people, similar rankings
+# Data: slightly less dispersed than Matches - 7-8ish pp
+
+# SETS WIN-LOSS RATIOS IN WINS
+# Randoms appear more here. Roy Barth leads the way here - similar to other surfaces, low wins helps
+# Lendl, Connors, Djok, Fed are all thereabouts
+# Data: Low-ish dispersion after outliers of Barth et al. 2-3 pp from 3rd to 20th etc.
+
+# SETS WIN-LOSS RATIOS IN LOSSES
+# Laver is outlier high and number 1 all the way through. Borg come sup 
+# Humbert, Rune (too new?), Sampras, Braasch, Freeman feature
+# Fed is highest in top 10 thereabouts, Djok, Lendl, Connors are behind. Nadal, Murray also behind
+# Data: Laver is the outlier high, but the others are low dispersed 2-3 pp from 2-10
+
+# GAMES WIN-LOSS RATIOS
+# V similar to Sets/Matche except Connors and Lendl lead with Djok, Fed, Borg close behind
+# Nadal, Laver, MceNroe etc all in there
+# Data: V low dispersion and no outliers. 2-3 pp from 1-10	
+
+# GAMES WIN-LOSS RATIOS IN WINS
+# Mayer, Borg lead the way and Lendl is close
+# Rosewall, Connors, Barth also feature
+# Djokovic is a bit far away but closer than Fed, Nadal
+# DAta: V low dispersion. 3-4 pp from 1-10, sometimes slight gap from 1 to 2
+
+# GAMES WIN-LOSS RATIOS IN LOSSES
+# Fed is mostly the leader here with big servers Isner, Karlovic, Sampras, Raonic, Pat Cash close by
+# Others are not v close, Djokovic, Lendl, Connors, Nadal a bit behind
+# Data: V low dispersion: 1-2 pp between top 20
+
+# STRAIGHTS_WINS
+# Outliers do v well here. Barth, Martin, Mayer etc.
+# Lendl is therabouts when it settles. Fed, Connors, Djok are not far but not close
+# Data: High dispersion at the top with the randoms but low there after
+
+# STRAIGHTS_WINS_TOT
+# Similar to the story. Lendl, Djok, Fed dominate. In that order
+# Connors appears in the smaller windows
+# Similar top 10
+# Data: Medium dispersion, no real outliers
+
+# STRAIGHTS_LOSSES
+# Laver kills it and then Metrevelli. A bunch of randoms eg Rune, Braasch, Gonzalez in the mix
+# Sampras appears a bit. Fed is also around at the top
+# Lendl, Djok, Connors, Nadal are very much behind
+# Data: Medium dispersion after Laver outlier. 4-5pp in 2-10
+
+# STRAIGHTS_LOSSES_TOT
+# Laver wins here with Fed a close second
+# Djok gets better over time and comes 3rd
+# Sampras, Connors, Lendl all appear close
+# McEnroe, Borg are also close
+# Data: Medium dispersion. 6-7pp in 1-10
+
+######### GRASS
+# Findings:
+# Winner is Johnny Mac - he is 1 in the imp ratios and is outlier high in many ratios
+# Fed is Big4 winner and very close 2nd, he is definitely 1 in Losses. 
+# Djokovic comes 3rd overall but a bit distant to JM/RF
+# Other notable folks: Sampras, Connors, Borg, Laver
+# Data: Games' ratios are much less dispersed than Sets. Sets tend to also be less dispersed for Wins/Losses
+# Notes: 
+In Grass there is a small sample problem - a few players with v few won matches come to the top with low filters
+Limiting to 20 matches doesnt make much change. Limiting to 50 helps but many players don't appear in smaller windows or appear fewer times
+
+# MATCH WIN-LOSS RATIOS
+# Big4: Federer is 2nd mostly and Djokovic rises a lot especially as the windows get wider. Murray is close and Nadal also features at times
+# Other era legends: McEnroe is the leader all the way through. Sampras, Laver, Borg, Becker, Connors feature at times
+# Other: Roddick is also there abouts
+# Data: Difference in ratio is dispersed. Falls of 10+ pp seen from 1 to 10
+
+# SETS WIN-LOSS RATIOS
+# Similar to above
+# Edberg features a little more
+# Nadal (except the 5 window) and Borg are lower
+# Data: Difference in ratio is dispersed. Falls of 10+ pp seen from 1 to 10
+
+# SETS WIN-LOSS RATIOS IN WINS
+# McEnroe, Fed lead in smaller windows but in bigger windows ppl like Roche, Isner, Anand Amritraj, Emerson, Kachel, Mecir feature on top
+# Big4: Much lower for the rest, Murray is thereabouts, so is Djok. Nadal is much lower
+# Other era legends: Sampras, Laver, Borg, Becker all are much lower. McEnroe does well in larger windows
+# Data: Difference in ratio is less dispersed. Falls of 5-7 pp seen from 1 to 10
+
+# SETS WIN-LOSS RATIOS IN LOSSES
+# Roche and Fed are the dominant folks here. Leconte, Isner, Ivanisevic, Kodes feature a bit + some other randoms Zverev, Carlsen, 
+# Big4: Nadal comes up in the 5 and 7 windows, but does ok in others. Djok does a quite a bit lower
+# Other era legends: Sampras, Laver, Borg all are much lower. Becker, McEnroe feature but not super high
+# Data: Difference in ratio is much less dispersed. Falls of 3-4 pp seen from 2 to 10. Fed and esp Roche are outlier high
+
+# GAMES WIN-LOSS RATIOS
+# Similar to sets/matches. Fed, Djok, McEnroe feature. 
+# Nadal drops with time, Murray is generally good across time
+# Data: Difference in ratio is much less dispersed. Falls of 3-4 pp seen from 2 to 10. McEroe is outlier high
+
+# GAMES WIN-LOSS RATIOS IN LOSSES
+# Big4: Fed leads the way all the way through. The rest are a bit lower, noting low dispersion ofc
+# Some big servers feature eg Karlovic, Querrey, Isner, Roddick, Lopez and some legends like Roche, Leconte
+# Other era legends: McEnroe features in 3 year window but not in others. Sampras et al feature at close rates but much later
+# Data: Difference in ratio is very less dispersed. Falls of 1-2 pp seen from 1 to 10. No outliers except Fed in the 3 year window
+
+# GAMES WIN-LOSS RATIOS IN WINS
+# McEnroe leads the way with Emerson close and Mecir rising up
+# Graebner, Connors, Roche also feature a lot
+# Big4 + Other legends: All lower, but given small dispersion in the list isnt too material. 1-2 pp behind the top folks usually
+# Data: Difference in ratio is very less dispersed. Falls of 1-2 pp seen from 1 to 10. No outliers
+
+# STRAIGHTS_WINS
+# McEnroe, Fed drop a bit over the wider windows but reign in smaller windows
+# Amritaj, Kachel, Roche, Isner feature a bit, especially in larger windows. Mahut, Hewitt, Mecir, Richard Gonzalez, Graebner also feature
+# Sampras, Edberg, Borg, Becker feature but a bit low
+
+# STRAIGHTS_WINS_TOT
+# Similar to Match data
+# McEnroe, Fed are again the kings here, Djok is a bit lower and rises to 3rd in the 9 year window
+# Isner also features a bit
+# Nadal is lower, Murray features
+# Sampras, Roche, Becker appear sometimes
+# Data: More dispersion seen here, also similar to Matches
+
+# STRAIGHTS_LOSSES
+# Roche, Fed is again the king, having very low ratios. Leconte, Gilbert, Laver also do well
+# Nadal randomly comes up in 5 window, slightly behind in others
+# Other era legends: McEnroe, Sampras, Edberg, Borg, Becker are disappointing
+# Data is dispersed as is the theme here
+
+# STRAIGHTS_LOSSES_TOT
+# Fed, McEnroe, Nadal are really good in this
+# Laver, Roche, Sampras, Murray, Djokovic, Rafter, Leconte also feature. 
+# Data is much less dispersed than other Straights ones. Falls of 1-2 pp seen from 2 to 10. Fed is outlier
+
+######### CLAY
+# Findings:
+# Winner is Rafa Nadal - by a mile he is 1 in all ratios and is outlier high in many ratios
+# Borg is number 2, also outlier high with the rest
+# Lendl is 3rd, but heavy contest between Djokovic, Lendl, Courier, Carlsson, Vilas, Alcaraz (too early to tell?) - all distant to RN/BB still
+# Data: Games' ratios are much less dispersed than Sets. Sets tend to also be less dispersed for Wins/Losses
+
+# MATCH WIN-LOSS RATIOS
+# Nadal beats the pants off everyone else. So does Borg, but by slightly less
+# Big4: Djokovic rises over time, Federer is close but not close enough
+# Other eras: Lendl, Wilander, Rosewall, Connors, Nastase, Santana, Vilas feature. Alcaraz is also up there!
+# Data: Low dispersion around 5pp from 3-10. Nadal higher by 7pp, Borg by 5pp
+
+# SETS WIN-LOSS RATIOS
+# Similar to Match ratios, Nadal wins by a mile. Then Borg. Djok gets better
+# Other era legends also similar. Connors a bit higher, slight shuffle. Alcaraz a bit lower
+# Data dispersion is similar to Match -> Nadal gap is even higher here like 10pp, Borg is 5-6
+
+# SETS WIN-LOSS RATIOS IN WINS
+# Nadal continues to dominate but is still close 3rd behind Golubev, Jaryyd etc. Randoms
+# Big4: Djok/Fed don't feature much. Neither does Borg, Lendl, Alcaraz etc
+# Data: Much lower dispersion - 3/4 pp in top 10
+
+# SETS WIN-LOSS RATIOS IN LOSSES
+# Nadal does not feature here - I guess a victim of his success as he had such few losses... 
+# Courier, Isner, Roddick, Tsitsipas, del Potro feature. 
+# Big4: Fed, Djokovic, and other era legends are also a bit behind
+# Data: Much lower dispersion - 3/4 pp in top 10
+
+# GAMES WIN-LOSS RATIOS
+# V similar to Sets, similar players start coming up
+# Borg and Nadal have similar ratios - Nadal still higher
+# Big4: Djok rises a bit but still low, Fed much lower
+# Alcaraz doesnt feature. Carlsson, Vilas do better here
+# Data dispersion is similar to Match -> Nadal gap is lower and similar to Borg here like 5-6pp
+
+# GAMES WIN-LOSS RATIOS IN WINS
+# Nadal is Number 2 behind Carlsson leads. Borg is also up there
+# Vilas, Agassi, Orantes, Lendl, McEnroe also feature
+# Djokovic / Fed are further behind
+# Data: Much lower dispersion - 3/4 pp in top 10
+
+# GAMES WIN-LOSS RATIOS IN LOSSES
+# Better servers do better here. Isner, Karlovic, Rublev, Roddick
+# Tsitsipas, Alcaraz and Courier also feature
+# Djok, Nadal, Borg, Fed, Lendl feature low
+# Data: Much lower dispersion - 3/4 pp in top 10
+
+# STRAIGHTS_WINS
+# Nadal continues to dominate but is 3/4th behind Golubev, Jaryyd, Roddick etc. Randoms
+# Big4: Djok/Fed don't feature much. Neither does Borg, Lendl, Alcaraz etc
+# Data: Much lower dispersion from 4-10 - 3/4 pp. The top 3/4 pull away a bit, 4-5 pp among them
+
+# STRAIGHTS_WINS_TOT
+# Nadal comes back strong, big outlier over Borg (at number 2), Vilas et al
+# Lendl and Connors feature too as do Orantes, Clerc, Carlsson
+# Big4: Fed/Djok are there but behind
+# Data: Decent dispersion seen here, Nadal is big outlier so is Borg and rest do spread out too
+
+# STRAIGHTS_LOSSES
+# Better servers do better here. Isner, Karlovic, Rublev, Roddick
+# Tsitsipas, Alcaraz and Courier also feature
+# Djok, Nadal, Borg, Fed, Lendl feature low
+# Data: Decent dispersion - 10+ pp in top 10
+
+# STRAIGHTS_LOSSES_TOT
+# Nadal is strong here, but close to Borg, Lendl, Alcaraz
+# Djokovic does much better in this. Fed is a bit far
+# Tsitsipas, Alcaraz and Courier also feature
+# Mid-range dispersion. 5-6pp in top 10
