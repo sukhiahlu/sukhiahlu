@@ -1,4 +1,4 @@
-#Author: Nitish Arora
+#Author - Sukwinder Ahluwalia
 #Purpose: build a simple Churn model using Kaggle data from here: https://www.kaggle.com/datasets/blastchar/telco-customer-churn/versions/1?resource=download
 #This data is then saved locally
 #Credit to Natassha Selvaraj and 365 data science for the inspiration:

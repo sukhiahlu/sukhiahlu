@@ -1,0 +1,102 @@
+# Author: Nitish Arora
+# Purpose: Share all prompts
+# This code is built using ChatGPT. My prompts are included below:
+
+# Big thanks to Jeff Sackman for creating this rich repository of tennis data. 
+# Tennis databases, files, and algorithms by Jeff Sackmann / 
+# Tennis Abstract is licensed under aCreative Commons 
+# You can find his work here: https://github.com/JeffSackmann.
+
+
+Prompt 1: "hi, i have a tennis dataset for a year of data. i want to analyse a column called 'winner_id'. specifically i want to get a win/loss ratio based on this column for the year. how do i go about this in R using tidyverse?"
+
+Response 1: Provided instructions and R code for analyzing the "winner_id" column and calculating the win/loss ratio for a specific year using the tidyverse package.
+
+Prompt 2: "can you sort win_loss_data by the new column and also show winner_name and number of matches played as extra columns?"
+
+Response 2: Modified the previous R code to sort the "win_loss_data" by the win/loss ratio and include additional columns for the winner's name and the number of matches played.
+
+Prompt 3: "what is a shortcut in R for running the script?"
+
+Response 3: Explained how to run an R script using the source() function and mentioned the option in RStudio to run code interactively.
+
+Prompt 4: "how do i read multiple csvs into the same dataset?"
+
+Response 4: Provided code and instructions on how to read and combine multiple CSV files into the same dataset in R.
+
+Prompt 5: "it gives me this error: Error in read.table(file = file, header = header, sep = sep, quote = quote, : duplicate 'row.names' are not allowed"
+
+Response 5: Addressed the error by modifying the code to set row names explicitly to NULL when reading and combining CSV files.
+
+Prompt 6: "ok so there are many files in this folder. you have asked me to do a pattern match as follows: 'pattern = "\.csv$". how do I narrow the files further? the files all start with 'atp_matches_' and have the year after the final underscore"
+
+Response 6: Provided code and instructions on how to narrow down the list of files based on a specific naming pattern that includes "atp_matches_" and the year.
+
+Prompt 7: "this bit, can you help me make this a range and not a specific year."
+
+Response 7: Modified the code to filter data for a range of years instead of a specific year.
+
+Prompt 8: "thank you. you have been amazing, can I hire you?"
+
+Response 8: Expressed gratitude and explained that I'm not available for hire as I'm a computer program.
+
+Prompt 9: "so here can you create a rank column for each of the ordered output"
+
+Response 9: Provided code and instructions on how to create a rank column based on the ordered output.
+
+Prompt 10: "new descriptive stat I need is count. count number of times this id has appeared"
+
+Response 10: Provided instructions and code on how to calculate the count of appearances for each "winner_id" in your dataset.
+
+Prompt 11: "is asc a real function? R gave me this error! could not find function 'asc'"
+
+Response 11: Clarified that 'asc' is not a real function in R and provided the correct way to specify ascending order using the arrange function.
+
+Prompt 12: "how do i add 2 arguments in the arrange function"
+
+Response 12: Explained how to add multiple columns as arguments in the arrange function to sort by multiple columns.
+
+**Prompt 13:**
+How to call another R code?
+**Response 13 Summary:**
+To call another R code, use the `source()` function in your main R script, providing the path to the other script you want to call. This executes the code in the other script as part of your main script.
+
+**Prompt 14:**
+How to call the function created in the my_other_code script?
+**Response 14 Summary:**
+To call a function defined in another R script after sourcing it using `source()`, simply use the function's name in your main script. This allows you to access and use the function's functionality within your script.
+
+**Prompt 15:**
+How does this function return a dataset?
+**Response 15 Summary:**
+To have a function return a dataset in R, create and return a data frame or data frame-like structure within the function. You can define the data frame and return it as the function's output.
+
+**Prompt 16:**
+How to use loops in R?
+**Response 16 Summary:**
+In R, you can use loops such as `for` loops, `while` loops, and `repeat` loops to execute code repeatedly. Choose the appropriate loop type based on your specific use case and iteration requirements.
+
+**Prompt 17:**
+I have a loop that calls a function which produces a small dataset. I want to combine the output of this into a bigger file. How can I do that?
+**Response 17 Summary:**
+To combine the output of a loop into a bigger dataset, initialize an empty data frame or list before starting the loop. In each iteration, append the small dataset produced by your function to the larger data structure.
+
+**Prompt 18:**
+How to get a list of columns of a dataset in R?
+**Response 18 Summary:**
+To get a list of column names from a dataset (data frame) in R, use either the `colnames()` function or the `names()` function. Both methods provide a character vector containing the column names.
+
+**Prompt 19:**
+How do I add a filter that selects all possible values?
+**Response 19 Summary:**
+To create a filter that selects all possible values for a specific variable/column in R, use the `%in%` operator with a vector containing all the unique values of that variable. This filter will include all rows with any unique value for the specified column.
+
+**Prompt 20:**
+How do I create a function with an argument that filters a column, and I want to have options where I don't filter that column at all. How do I do that?
+**Response 20 Summary:**
+To create a function with an optional argument for filtering a column in R, use a conditional statement within the function to check if the argument is provided. If it's provided, apply the filter; if not, skip the filtering step.
+
+**Prompt 21:**
+Can you send all prompts to me in a better format?
+**Response 21 Summary:**
+Certainly, here are all the prompts in a numbered format starting from 13 and ending with the last prompt in this conversation.

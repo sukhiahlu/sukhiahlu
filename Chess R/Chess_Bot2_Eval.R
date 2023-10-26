@@ -1,5 +1,5 @@
 #The goal is to create a simple Chess game in R
-#Author - Nitish Arora
+#Author - Sukwinder Ahluwalia
 
 #Install required packages
 #install.packages('rchess')
