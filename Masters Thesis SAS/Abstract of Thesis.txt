@@ -1,0 +1,36 @@
+Whole thesis available on request. Thesis written for University of Melbourne by me (note Sukhwinder Ahluwalia is not my real name)
+
+#### Title: 
+‘How’s that?!’1 Even the pros make mistakes
+- an analysis of decision-making using the coin-toss in Cricket
+
+#### Abstract:
+- This paper seeks to understand how decision-making evolves as individuals make similar repeated decisions over time using the coin-toss in the sport of Cricket. 
+- At the start of all Cricket matches, teams are granted the decision rights to make a decision about which team bats or fields in which innings of the match 
+via a coin-toss. 
+- This paper measures the impact of the coin-toss decisions on match outcome as teams play more matches, and make more decisions, over time. 
+- The paper finds that toss winners are less likely to win ‘Day’ matches (played only during the Day) and 
+more likely to win ‘Day/Night’ matches (played partially in the evening) from 1971-2016. 
+- Within a ‘series of matches’, which are played between the same teams over a short time interval under similar playing conditions 
+(even though these do change between matches), there is no significant improvement in decisions made. 
+- Moreover, the decision making trends over the whole sample point towards a diminishing ‘advantage’ from winning the toss. 
+- This might point towards consistently, and persistently, biased beliefs between teams as modelled in this study.
+- My thesis was an update on the original paper: Bhaskar (2009)
+
+#### Thesis Table of Contents
+1. Introduction ............................................................................................................ 1
+2. Background on Cricket .......................................................................................... 7
+3. Decision at the toss ................................................................................................. 8
+4. Updating Bhaskar (2009) ....................................................................................... 10
+a. Toss relevance under complete information-sharing ................................... 10
+b. Data ............................................................................................................ 13
+c. Advantage of winning the toss .................................................................... 13
+5. Introducing beliefs and learning .......................................................................... 18
+a. Team beliefs ................................................................................................ 19
+b. Belief-updating and learning ........................................................................ 22
+6. Decisions over time ............................................................................................... 23
+a. Within a ‘series’ ............................................................................................ 23
+b. Longer term trends ....................................................................................... 28
+c. Discussion ................................................................................................... 32
+7. Conclusion ............................................................................................................. 33
+8. Appendices ............................................................................................................ 36
