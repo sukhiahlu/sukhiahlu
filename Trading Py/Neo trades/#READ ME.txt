@@ -1,0 +1,23 @@
+#READ ME
+
+#File definitions
+#In the notebook
+# - Imports: Needed in all too
+# - Currency def
+# - To do
+# - All function calls: Here
+# and analyse above on top?
+
+#In project_pkg
+# - PPT downloads: Separate
+
+# - Analysis function: Separate
+# - Filter function: Separate, maybe with above
+# - sans USD function: Separate, maybe with above
+
+# - Appendix: Separate
+
+#Also the below if needed...
+#Installing necessary packages
+# !pip install pyautogui
+# !pip install time
