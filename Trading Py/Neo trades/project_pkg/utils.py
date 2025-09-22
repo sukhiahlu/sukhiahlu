@@ -215,3 +215,30 @@ def df_div(symbols):
     # print(result.keys())
     # print(result['EURAUD'])
     return(result)
+
+#Analyse the data using above functions
+def analyse(name, df):
+    df2 = Run(df,name)
+    df2 = df2.tail()
+
+    # Strong set: 4 filters
+    # - Close is near AT and/or 12m H/L then time could be to reverse - Strong
+    # - Rolling MA crosses comparisons for 12 with various and AT
+    df_st = Filter(df2, ['AT_MA_Filter', '12m_MA_Filter'
+                        ,'MA_6_AT','MA_12_AT'])
+    
+    df_st = df_st [['Currency', 'Total_Filters']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)
+    df_st = df_st.drop_duplicates(subset=['Currency']) #, 'Total_Filters'
+    
+    # Weak set: 11 filters
+    # - Close is near other H/L then time could be to reverse - Weak
+    # - Rolling MA crosses comparisons for 1 with various and 3/6
+    # - Slopes for sudden jumps
+    df_wk = Filter(df2, ['1m_MA_Filter','3m_MA_Filter','6m_MA_Filter'
+                         ,'MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_1_AT','MA_3_6'
+                        ,'1m_slope','3m_slope','6m_slope'])
+    
+    df_wk = df_wk [['Currency', 'Total_Filters']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)   
+    df_wk = df_wk.drop_duplicates(subset=['Currency'])
+    
+    return df_st,df_wk
