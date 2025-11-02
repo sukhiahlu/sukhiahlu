@@ -37,6 +37,7 @@ def dld(Curr):
     pyautogui.hotkey('tab')
     pyautogui.typewrite('d') #Daily
     pyautogui.click(1000, 265) #Request
+    pyautogui.click(1000, 265) #Requestx2
     pyautogui.click(480, 640) #Export
     #time.sleep(2)
     pyautogui.click(700, 215) #Change the directory for these
