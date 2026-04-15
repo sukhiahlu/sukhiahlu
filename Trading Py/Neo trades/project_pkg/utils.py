@@ -137,11 +137,6 @@ def Filter(df_c, filter_columns):
     # Apply the filter
     return df_c2[eval(filter_condition)]
 
-#Checks
-# df_wk['12m_MA_Filter'].value_counts()
-# df_st['12m_MA_Filter'].value_counts()
-# df_wk.tail()
-
 #Function 3: Creating new dfs for sans-USD
 def df_div(symbols):
     #Step 1: Create and save the data
@@ -206,20 +201,31 @@ def df_div(symbols):
         quote = b.replace("USD", "")
         cross_name = f"{base}{quote}"
 
-        # reset <DATE> as column and keep exact column order
-    #     cross_df = cross_df.reset_index().rename_axis(None)
-    #     cross_df = cross_df[["<DATE>"] + cols]
-
         result[cross_name] = cross_df
 
-    # print(result.keys())
-    # print(result['EURAUD'])
     return(result)
+
+#Function 4: Add check on close
+def close_check(df):
+    first_close = df.iloc[0]['<CLOSE>']
+    last_close = df.iloc[-1]['<CLOSE>']
+
+    if last_close > first_close:
+        label = 'higher'
+    elif last_close < first_close:
+        label = 'lower'
+    else:
+        label = 'equal'
+
+    result = df.copy()
+    result['Close_check'] = label
+    return result
 
 #Analyse the data using above functions
 def analyse(name, df):
     df2 = Run(df,name)
     df2 = df2.tail()
+    df2 = close_check(df2)
 
     # Strong set: 4 filters
     # - Close is near AT and/or 12m H/L then time could be to reverse - Strong
@@ -227,7 +233,7 @@ def analyse(name, df):
     df_st = Filter(df2, ['AT_MA_Filter', '12m_MA_Filter'
                         ,'MA_6_AT','MA_12_AT'])
     
-    df_st = df_st [['Currency', 'Total_Filters']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)
+    df_st = df_st [['Currency', 'Total_Filters','AT_High','AT_Low','<CLOSE>','Close_check']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)
     df_st = df_st.drop_duplicates(subset=['Currency']) #, 'Total_Filters'
     
     # Weak set: 11 filters
@@ -238,7 +244,7 @@ def analyse(name, df):
                          ,'MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_1_AT','MA_3_6'
                         ,'1m_slope','3m_slope','6m_slope'])
     
-    df_wk = df_wk [['Currency', 'Total_Filters']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)   
+    df_wk = df_wk [['Currency', 'Total_Filters','AT_High','AT_Low','<CLOSE>','Close_check']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True) 
     df_wk = df_wk.drop_duplicates(subset=['Currency'])
     
     return df_st,df_wk
