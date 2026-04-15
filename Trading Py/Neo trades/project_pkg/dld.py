@@ -17,7 +17,7 @@ def dld(Curr):
     # mouseNow.py - Displays the mouse cursor's current position.
     #Mouse coordinates. = x = (0,1919) y = (0,1079)
 
-    pyautogui.PAUSE = 4
+    pyautogui.PAUSE = 2
 
     #Get to Pepperstone app
     pyautogui.click(25, 900)
