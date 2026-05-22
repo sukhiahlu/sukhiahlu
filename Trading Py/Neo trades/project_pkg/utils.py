@@ -9,7 +9,14 @@ import itertools
 
 from datetime import date
 
+import pandas as pd
+from statsmodels.tsa.stattools import adfuller
+from hurst import compute_Hc
+from MFDFA import MFDFA
+from typing import Tuple
+
 pd.set_option('display.max_columns', None)
+
 #Function 1: #load the data and basic analyses
 
 #Sub-function: Get slope for the MAs
@@ -216,16 +223,15 @@ def close_check(df):
         label = 'lower'
     else:
         label = 'equal'
-
-    result = df.copy()
-    result['Close_check'] = label
-    return result
+        
+    return label
 
 #Analyse the data using above functions
 def analyse(name, df):
     df2 = Run(df,name)
     df2 = df2.tail()
-    df2 = close_check(df2)
+    df2['Close_check'] = close_check(df2)
+    df2 = df2.tail(1)
 
     # Strong set: 4 filters
     # - Close is near AT and/or 12m H/L then time could be to reverse - Strong
@@ -248,3 +254,172 @@ def analyse(name, df):
     df_wk = df_wk.drop_duplicates(subset=['Currency'])
     
     return df_st,df_wk
+
+#Hurst-exponent for how quickly mean reversion
+def get_hurst(series):
+    series = series.dropna().values
+    lags = range(2, 100) # The time scales we are checking
+   
+    # Standard deviation of differences scales as lag^H
+    sigmas = [np.std(series[lag:] - series[:-lag]) for lag in lags]
+    # Linear fit: log(sigma) = H * log(lag) + constant
+    poly = np.polyfit(np.log(lags), np.log(sigmas), 1)
+    
+    return poly[0] # The slope IS the Hurst exponent
+
+#MFDA analysis - superset of Hurst
+def get_MFDFA(series):
+    # 1. Generate or load your time series data
+    # For this example, we use a random walk (integrated white noise)
+    data = np.cumsum(series)
+
+    # 2. Define the parameters for MFDFA
+    # Select the scales (window sizes) - usually logarithmic ranging from 3-1000 as per convention
+    lag = np.unique(np.logspace(0.5, 3, 20).astype(int))
+
+    # Select the q-values (the "generalized" part)
+    # q < 0 sensitive to small fluctuations; q > 0 sensitive to large ones as per convention
+    q = np.linspace(-5, 5, 41)
+
+    # The polynomial order for detrending (1 = linear, 2 = quadratic)
+    order = 2 #as per convention
+
+    # 3. Run the MFDFA
+    # This returns the fluctuation function F_q(s)
+    lag, dfa = MFDFA(data, lag=lag, q=q, order=order)
+
+    # 4. Extract the Generalized Hurst Exponents (Hq)
+    # We calculate the slope of log(F_q) vs log(lag) for each q
+    num_columns = dfa.shape[1]
+    Hq = np.zeros(len(q))
+    for i in range(num_columns):
+        # The log of DFA can produce -inf if fluctuations are 0
+        y = np.log(dfa[:, i])
+        x = np.log(lag)
+
+        mask = np.isfinite(y) & np.isfinite(x)
+
+        # Need at least 2 points to fit a line!
+        if np.sum(mask) > 2:
+            poly = np.polyfit(x[mask], y[mask], 1)
+            Hq[i] = poly[0]
+        else:
+            Hq[i] = np.nan
+
+    return Hq[q == 2][0] #Second moment again as per convention
+
+# Hurst using Fractals Cycle
+def calculate_hurst(prices: np.ndarray, min_window: int = 10) -> Tuple[float, float]:
+    # Convert prices to log returns - for %ge returns check (as stocks esp are %ge driven not absolute) and ensuring min. is 0
+    if len(prices) < min_window * 2:
+        raise ValueError(f"Need at least {min_window * 2} data points")
+
+    returns = np.diff(np.log(prices))
+    n = len(returns)
+
+    # Generate sub-period sizes (powers of 2 work well)
+    max_k = int(np.floor(np.log2(n)))
+    sizes = [2**i for i in range(int(np.log2(min_window)), max_k)]
+    sizes = [s for s in sizes if s <= n // 2]
+
+    if len(sizes) < 2:
+        raise ValueError("Not enough data for R/S analysis")
+
+    rs_values = []
+
+    for size in sizes:
+        # Number of sub-periods of this size
+        num_periods = n // size
+        rs_sum = 0.0
+        valid_periods = 0
+
+        for i in range(num_periods):
+            # Extract sub-period
+            start = i * size
+            end = start + size
+            subset = returns[start:end]
+
+            # Calculate mean and deviations
+            mean = np.mean(subset)
+            deviations = subset - mean
+
+            # Cumulative sum of deviations
+            cumsum = np.cumsum(deviations)
+
+            # Range of cumulative deviations
+            range_val = np.max(cumsum) - np.min(cumsum)
+
+            # Standard deviation
+            std = np.std(subset, ddof=1)
+
+            # Skip if std is too small (avoid division issues)
+            if std > 1e-10:
+                rs_sum += range_val / std
+                valid_periods += 1
+
+        if valid_periods > 0:
+            rs_values.append((size, rs_sum / valid_periods))
+
+    if len(rs_values) < 2:
+        raise ValueError("Could not compute enough R/S values")
+
+    # Linear regression of log(R/S) vs log(n)
+    sizes_arr = np.array([v[0] for v in rs_values])
+    rs_arr = np.array([v[1] for v in rs_values])
+
+    log_sizes = np.log(sizes_arr)
+    log_rs = np.log(rs_arr)
+
+    # Slope is the Hurst exponent
+    slope, intercept = np.polyfit(log_sizes, log_rs, 1)
+
+    # Calculate R-squared for quality assessment
+    predicted = slope * log_sizes + intercept
+    ss_res = np.sum((log_rs - predicted) ** 2)
+    ss_tot = np.sum((log_rs - np.mean(log_rs)) ** 2)
+    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+
+    return slope, r_squared
+
+#Rolling hurst checks
+def rolling_hurst(series, window_size=500 #As the data is ~1000 so to get enough input but some files are much smaller
+                  , max_window_fraction=0.15): #Same - ~500 rows of data so best to windows that have enough sub-samples
+    hurst_values = []
+    
+    # We need enough data for at least one window
+    if len(series) < window_size:
+        raise ValueError(f"Series length ({len(series)}) must be >= window_size ({window_size})")
+
+    # Slide the window across the data
+    for i in range(window_size, len(series) + 1):
+        sub_series = series[i - window_size : i]
+        
+        # 1. Get raw H and the underlying R/S data from the package
+        # We use kind='price' assuming you are passing raw prices
+        H_raw, c, data = compute_Hc(sub_series, kind='price', simplified=True)
+        
+        list_n = data[0]
+        list_rs = data[1]
+        
+        # 2. Chop off the tail (The 1/10 Rule)
+        limit = window_size * max_window_fraction
+        valid_idx = [j for j, n in enumerate(list_n) if n <= limit]
+        
+        if len(valid_idx) < 2:
+            continue # Not enough points left to fit a line
+            
+        f_n = np.log(np.array(list_n)[valid_idx])
+        f_rs = np.log(np.array(list_rs)[valid_idx])
+        
+        # 3. Re-calculate the stable slope (Hurst)
+        H_stable, intercept = np.polyfit(f_n, f_rs, 1)
+        hurst_values.append(H_stable)
+
+    # 4. Summarize the rolling statistics
+    if not hurst_values:
+        return np.nan, np.nan
+        
+    avg_h = np.mean(hurst_values)
+    std_h = np.std(hurst_values)
+    
+    return avg_h, std_h
