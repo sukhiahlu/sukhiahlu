@@ -12,11 +12,15 @@ import itertools
 from datetime import date
 
 pd.set_option('display.max_columns', None)
-def dld_h4(Curr):
+def dld(Curr):
     #! python3
     # mouseNow.py - Displays the mouse cursor's current position.
     #Mouse coordinates. = x = (0,1919) y = (0,1079)
 
+    pyautogui.PAUSE = 2
+    # pyautogui.PAUSE = 1
+    pyautogui.click(350, 200)
+    #pyautogui.hotkey('alt', 'tab')
     pyautogui.PAUSE = 2
 
     #Get to currency page
@@ -28,10 +32,10 @@ def dld_h4(Curr):
     pyautogui.typewrite("audusd")
     pyautogui.hotkey('enter')
     pyautogui.hotkey('tab')
-    pyautogui.typewrite('h') #Daily
-    pyautogui.typewrite('h') #Daily
-    pyautogui.typewrite('h') #Daily
-    pyautogui.typewrite('h') #Daily
+    pyautogui.typewrite('h') #Hourly
+    pyautogui.typewrite('h') #Hourly
+    pyautogui.typewrite('h') #Hourly
+    pyautogui.typewrite('h') #Hourly 4
     pyautogui.click(1000, 265) #Request
     pyautogui.click(1000, 265) #Requestx2
     pyautogui.click(480, 640) #Export
@@ -65,4 +69,4 @@ def dld_h4(Curr):
 # Keeps the module importable without side effects.
 # Lets you run the file directly for debugging or as a script.
 if __name__ == "__main__":
-    dld_h4()
+    dld()
