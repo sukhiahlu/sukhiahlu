@@ -1,26 +1,22 @@
-# Import the libraries
-import pyautogui
-import time
-import pandas as pd
-import numpy as np
-import plotly.graph_objs as go
 import os
 import itertools
-
-from datetime import date
-
+import numpy as np
 import pandas as pd
+import plotly.graph_objs as go
+from datetime import date
+from typing import Tuple, Dict, List
 from statsmodels.tsa.stattools import adfuller
-from hurst import compute_Hc
 from MFDFA import MFDFA
-from typing import Tuple
+from hurst import compute_Hc
 
 pd.set_option('display.max_columns', None)
 
-#Function 1: #load the data and basic analyses
+# --- Configuration ---
+BASE_PATH = os.getenv("FOREX_DATA_PATH", r"./data")
 
-#Sub-function: Get slope for the MAs
-def numpy_slope(series, window=10):
+
+def numpy_slope(series: pd.Series, window: int = 10) -> pd.Series:
+    """Calculates rolling linear regression slope."""
     def calc_slope(x):
         if len(x) < window:
             return np.nan
@@ -29,231 +25,241 @@ def numpy_slope(series, window=10):
     
     return series.rolling(window=window).apply(calc_slope)
 
-#Run function
-def Run(df,name):
-    #Currency and dates
+
+def Run(df: pd.DataFrame, name: str) -> pd.DataFrame:
+    """Generates features, lookback filters, and normalized moving average slopes."""
+    df = df.copy()
     df['Currency'] = name
     df['<DATE>'] = pd.to_datetime(df['<DATE>'], format='%Y.%m.%d')
-    df.set_index('<DATE>')
-    # Note these below apply to Lows and Highs
-    df['1m_MA_Filter'] = 0 
-    df['3m_MA_Filter'] = 0
-    df['6m_MA_Filter'] = 0
-    df['12m_MA_Filter'] = 0
-    df['AT_MA_Filter'] = 0
+    
+    time_periods = ['1m', '3m', '6m', '12m', 'AT']
+    for period in time_periods:
+        df[f'{period}_MA_Filter'] = 0
 
-    #High/Low since 1 month: 23 days or so
+    # Rolling Extremums and Means
     df['1m_High'] = df['<CLOSE>'].rolling(window=23).max()
     df['1m_Low'] = df['<CLOSE>'].rolling(window=23).min()
-    df['1m_Mean'] = df['<CLOSE>'].rolling(23).mean()
+    df['1m_Mean'] = df['<CLOSE>'].rolling(window=23).mean()
         
-    #High/Low since 3 months: 70 days or so
     df['3m_High'] = df['<CLOSE>'].rolling(window=70).max()
     df['3m_Low'] = df['<CLOSE>'].rolling(window=70).min()
-    df['3m_Mean'] = df['<CLOSE>'].rolling(70).mean()
+    df['3m_Mean'] = df['<CLOSE>'].rolling(window=70).mean()
     
-    #High/Low since 6 months: 135 days or so
     df['6m_High'] = df['<CLOSE>'].rolling(window=135).max()
     df['6m_Low'] = df['<CLOSE>'].rolling(window=135).min()
-    df['6m_Mean'] = df['<CLOSE>'].rolling(135).mean()
+    df['6m_Mean'] = df['<CLOSE>'].rolling(window=135).mean()
     
-    #High/Low since 12 months: 260 days or so
     df['12m_High'] = df['<CLOSE>'].rolling(window=260).max()
     df['12m_Low'] = df['<CLOSE>'].rolling(window=260).min()
-    df['12m_Mean'] = df['<CLOSE>'].rolling(260).mean()
+    df['12m_Mean'] = df['<CLOSE>'].rolling(window=260).mean()
         
-    #High/Low since 2022
     df['AT_High'] = df['<CLOSE>'].max()
     df['AT_Low'] = df['<CLOSE>'].min()
     df['AT_Mean'] = df['<CLOSE>'].mean()
     df['AT_Med'] = df['<CLOSE>'].median()
-    
-    # List of time periods
-    time_periods = ['1m', '3m', '6m', '12m', 'AT']
 
-    # Create 90th percentile slope filters for each time period
+    # Boundary Touch and Slope Normalization
     for period in time_periods:
-        # Create MA Filter for High and Close
-        df.loc[round(df[f'{period}_High'], 2) == round(df['<CLOSE>'], 2), f'{period}_MA_Filter'] = 1
+        is_near_high = np.isclose(df[f'{period}_High'], df['<CLOSE>'], rtol=1e-4)
+        is_near_low = np.isclose(df[f'{period}_Low'], df['<CLOSE>'], rtol=1e-4)
+        df.loc[is_near_high | is_near_low, f'{period}_MA_Filter'] = 1
 
-        # Create MA Filter for Low and Close
-        df.loc[round(df[f'{period}_Low'], 2) == round(df['<CLOSE>'], 2), f'{period}_MA_Filter'] = 1
-
-        # Calculate Slope
         df[f'{period}_MA_slope'] = numpy_slope(df[f'{period}_Mean'])
-
-        # Normalize Slope
-        df[f'{period}_MA_slope_nm'] = (df[f'{period}_MA_slope'] - df[f'{period}_MA_slope'].mean()) / df[f'{period}_MA_slope'].std()
+        std_slope = df[f'{period}_MA_slope'].std()
+        
+        if std_slope > 0:
+            df[f'{period}_MA_slope_nm'] = (df[f'{period}_MA_slope'] - df[f'{period}_MA_slope'].mean()) / std_slope
+        else:
+            df[f'{period}_MA_slope_nm'] = 0
        
-        # Create binary filter column on the percentile
         df[f'{period}_slope'] = (df[f'{period}_MA_slope_nm'] >= df[f'{period}_MA_slope_nm'].quantile(0.9)).astype(int)
     
-    # MA Crosses: Where rounded till 3 is the same eg 0.6659 = 0.6663 = 0.666 etc
-    # 1m vs 3m
-    df.loc[round(df['1m_Mean'], 3) == round(df['3m_Mean'], 3), 'MA_1_3'] = 1
+    # Scale-Independent Moving Average Crosses (using 0.05% proximity band)
+    ma_crosses = {
+        'MA_1_3': ('1m_Mean', '3m_Mean'),
+        'MA_1_6': ('1m_Mean', '6m_Mean'),
+        'MA_1_12': ('1m_Mean', '12m_Mean'),
+        'MA_1_AT': ('1m_Mean', 'AT_Mean'),
+        'MA_3_6': ('3m_Mean', '6m_Mean'),
+        'MA_3_12': ('3m_Mean', '12m_Mean'),
+        'MA_3_AT': ('3m_Mean', 'AT_Mean'),
+        'MA_6_12': ('6m_Mean', '12m_Mean'),
+        'MA_6_AT': ('6m_Mean', 'AT_Mean'),
+        'MA_12_AT': ('12m_Mean', 'AT_Mean')
+    }
 
-    # 1m vs 6m
-    df.loc[round(df['1m_Mean'], 3) == round(df['6m_Mean'], 3), 'MA_1_6'] = 1
-
-    # 1m vs 12m
-    df.loc[round(df['1m_Mean'], 3) == round(df['12m_Mean'], 3), 'MA_1_12'] = 1
-
-    # 1m vs AT
-    df.loc[round(df['1m_Mean'], 3) == round(df['AT_Mean'], 3), 'MA_1_AT'] = 1
-
-    # 3m vs 6m
-    df.loc[round(df['3m_Mean'], 3) == round(df['6m_Mean'], 3), 'MA_3_6'] = 1
-
-    # 3m vs 12m
-    df.loc[round(df['3m_Mean'], 3) == round(df['12m_Mean'], 3), 'MA_3_12'] = 1
-
-    # 3m vs AT
-    df.loc[round(df['3m_Mean'], 3) == round(df['AT_Mean'], 3), 'MA_3_AT'] = 1
-
-    # 6m vs 12m
-    df.loc[round(df['6m_Mean'], 3) == round(df['12m_Mean'], 3), 'MA_6_12'] = 1
-
-    # 6m vs AT
-    df.loc[round(df['6m_Mean'], 3) == round(df['AT_Mean'], 3), 'MA_6_AT'] = 1
-
-    # 12m vs AT
-    df.loc[round(df['12m_Mean'], 3) == round(df['AT_Mean'], 3), 'MA_12_AT'] = 1
-
-    # Optional: Fill NaN with 0 if needed
-    ma_filter_columns = [
-        'MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_1_AT', 
-        'MA_3_6', 'MA_3_12', 'MA_3_AT', 
-        'MA_6_12', 'MA_6_AT', 
-        'MA_12_AT'
-    ]
-    
-    for col in ma_filter_columns:
-        df[col] = df[col].fillna(0)
+    for col, (ma_a, ma_b) in ma_crosses.items():
+        df[col] = np.isclose(df[ma_a], df[ma_b], rtol=5e-4).astype(int)
 
     return df
 
-#Function 2: Filters to find the Trends. Where opps lie:
-def Filter(df_c, filter_columns):
-    # Create the filter condition
-    filter_condition = ' | '.join([f'(df_c["{col}"]==1)' for col in filter_columns])
+
+def Filter(df_c: pd.DataFrame, filter_columns: List[str]) -> pd.DataFrame:
+    """Filters rows matching any provided conditions and adds a sum column."""
+    if df_c.empty:
+        return df_c
     
-    # Create cumulative filter column
     df_c2 = df_c.copy()
     df_c2['Total_Filters'] = df_c2[filter_columns].sum(axis=1)
     
-    # Apply the filter
-    return df_c2[eval(filter_condition)]
+    mask = (df_c2[filter_columns] == 1).any(axis=1)
+    return df_c2[mask]
 
-#Function 3: Creating new dfs for sans-USD
-def df_div(symbols):
-    #Step 1: Create and save the data
+
+def df_div(symbols: List[str]) -> Dict[str, pd.DataFrame]:
+    """Ingests underlying files, handles USD base inversions, and computes cross-pairs."""
     dfs = {}
-    base_path = r"C:\Users\nitis\Documents\Forex\Data\New data"
-    cols = ["<OPEN>","<HIGH>","<LOW>","<CLOSE>"]
+    cols = ["<OPEN>", "<HIGH>", "<LOW>", "<CLOSE>"]
+    required = ["<DATE>"] + cols
+    
     for sym in symbols:
-        path = fr"{base_path}\{sym}.csv"
+        path = os.path.join(BASE_PATH, f"{sym}.csv")
+        if not os.path.exists(path):
+            continue
+            
         df = pd.read_csv(path, sep='\t')
-        # ensure required columns
-        required = ["<DATE>","<OPEN>","<HIGH>","<LOW>","<CLOSE>"]
-        # normalize
-        df = df.copy()
         df["<DATE>"] = pd.to_datetime(df["<DATE>"])
-        df = df.loc[:, required]  # keep exact column order        
-        # If symbol is USDxxx (USD is base), invert the 4 price columns
+        df = df[required].copy()
+        
         if sym.startswith("USD"):
-            # avoid divide-by-zero; replace zeros with NaN first
-            df[cols] = df[cols].replace({0: pd.NA}).astype(float)
+            df[cols] = df[cols].replace({0: np.nan}).astype(float)
             df[cols] = 1.0 / df[cols]
-            # Optional: rename to represent inversion (not required)
-            # e.g., USDCAD inverted now represents CADUSD prices
+            
+        df.set_index("<DATE>", inplace=True)
         dfs[sym] = df
-    # Step 2: divide on intersection of dates to form crosses
-    result = {}  # e.g., result["EURGBP"] -> DataFrame
 
-    #Loop through all datasets
-    for a, b in itertools.combinations(symbols, 2):
+    result = {}
+
+    for a, b in itertools.combinations(dfs.keys(), 2):
         L = dfs[a]
         R = dfs[b]
-        # ensure index is datetime and named "<DATE>"
-        for df in (L, R):
-            if not pd.api.types.is_datetime64_any_dtype(df.index):
-                # if <DATE> is a column, set it as index
-                if "<DATE>" in df.columns:
-                    df["<DATE>"] = pd.to_datetime(df["<DATE>"])
-                    df.set_index("<DATE>", inplace=True)
-                else:
-                    raise RuntimeError("No datetime index or <DATE> column found in L/R")
-
-        # now L and R have proper datetime index; do union/reindex then divide
-        common_index = L.index.union(R.index)
-        L = L.reindex(common_index)
-        R = R.reindex(common_index)
-        cross_df = L[cols].divide(R[cols])
-
-        # reset index to get <DATE> column back
-        cross_df = cross_df.reset_index().rename(columns={cross_df.columns[0]: "<DATE>"})
-
-        # perform division while keeping the index
-        cross_df = L[cols].divide(R[cols])
-
-        # now reset index and ensure the column is named "<DATE>"
-        cross_df = cross_df.reset_index()               # index -> first column
-        if cross_df.columns[0] != "<DATE>":
-            cross_df = cross_df.rename(columns={cross_df.columns[0]: "<DATE>"})
-
-        # now you can safely select ordered columns
+        
+        common_index = L.index.intersection(R.index)
+        if common_index.empty:
+            continue
+            
+        L_aligned = L.loc[common_index, cols]
+        R_aligned = R.loc[common_index, cols]
+        
+        cross_df = L_aligned.divide(R_aligned).reset_index()
+        cross_df.rename(columns={cross_df.columns[0]: "<DATE>"}, inplace=True)
         cross_df = cross_df.loc[:, ["<DATE>"] + cols]
-
+        
         base = a.replace("USD", "")
         quote = b.replace("USD", "")
-        cross_name = f"{base}{quote}"
+        result[f"{base}{quote}"] = cross_df
 
-        result[cross_name] = cross_df
+    return result
 
-    return(result)
 
-#Function 4: Add check on close
-def close_check(df):
+def close_check(df: pd.DataFrame) -> str:
+    """Evaluates chronological directionality of the subset."""
+    if df.empty:
+        return 'equal'
     first_close = df.iloc[0]['<CLOSE>']
     last_close = df.iloc[-1]['<CLOSE>']
 
     if last_close > first_close:
-        label = 'higher'
+        return 'higher'
     elif last_close < first_close:
-        label = 'lower'
-    else:
-        label = 'equal'
+        return 'lower'
+    return 'equal'
+
+def determine_direction_and_momentum(df_latest: pd.DataFrame) -> Tuple[str, str]:
+    """Engine to parse true Direction and Momentum labels without Hurst,
+    resolving lookback compression and MA crossover ambiguities.
+    """
+    if df_latest.empty:
+        return "Unknown", "Unknown"
         
-    return label
+    current_close = df_latest['<CLOSE>'].values[0]
+    
+    # --- 1. FIX THE BOUNDARY BLIND SPOT ---
+    # Instead of picking the min/max of everything, anchor to a reliable, fixed macro corridor.
+    # We will use the 6-month (135 window) as our structural reference space.
+    ceiling = df_latest['6m_High'].values[0]
+    floor = df_latest['6m_Low'].values[0]
+    
+    total_range = ceiling - floor
+    price_position = (current_close - floor) / total_range if total_range > 0 else 0.5
+    
+    if price_position > 0.85:
+        direction = "High"
+    elif price_position < 0.15:
+        direction = "Low"
+    else:
+        direction = "Neutral"
 
-#Analyse the data using above functions
-def analyse(name, df):
-    df2 = Run(df,name)
-    df2 = df2.tail()
-    df2['Close_check'] = close_check(df2)
-    df2 = df2.tail(1)
+    # --- 2. REGIME CLASSIFICATION BASED ON MA ALIGNMENT & SLOPES ---
+    slope_cols = ['1m_slope', '3m_slope', '6m_slope', '12m_slope']
+    crossover_cols = ['MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_3_6', 'MA_3_12', 'MA_6_12']
+    
+    total_active_slopes = df_latest[slope_cols].sum(axis=1).values[0]
+    total_active_crosses = df_latest[crossover_cols].sum(axis=1).values[0]
+    
+    # Check for true sequential trend alignment (e.g., 1m > 3m > 6m or vice versa)
+    ma_1m = df_latest['1m_Mean'].values[0]
+    ma_3m = df_latest['3m_Mean'].values[0]
+    ma_6m = df_latest['6m_Mean'].values[0]
+    
+    is_trending_up = (ma_1m > ma_3m) and (ma_3m > ma_6m)
+    is_trending_down = (ma_1m < ma_3m) and (ma_3m < ma_6m)
+    ma_alignment = is_trending_up or is_trending_down
 
-    # Strong set: 4 filters
-    # - Close is near AT and/or 12m H/L then time could be to reverse - Strong
-    # - Rolling MA crosses comparisons for 12 with various and AT
-    df_st = Filter(df2, ['AT_MA_Filter', '12m_MA_Filter'
-                        ,'MA_6_AT','MA_12_AT'])
+    # Trend Following: Slopes are active and MAs are cleanly stacked/fanning out (no crosses)
+    if total_active_slopes >= 2 and total_active_crosses == 0 and ma_alignment:
+        momentum = "Trend Following"
+    # Mean Reversion: MAs are tangling/crossing, or price is extended to boundaries with flat slopes
+    elif total_active_crosses >= 2 or (direction != "Neutral" and total_active_slopes == 0):
+        momentum = "Mean Reversion"
+    else:
+        momentum = "Neutral"
+        
+    return direction, momentum
+
+def analyse(name: str, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Executes structural sweeps, dividing into clean Macro and Micro sets."""
+    df2 = Run(df, name)
+    df_window = df2.tail(5).copy()
+    label = close_check(df_window)
     
-    df_st = df_st [['Currency', 'Total_Filters','AT_High','AT_Low','<CLOSE>','Close_check']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True)
-    df_st = df_st.drop_duplicates(subset=['Currency']) #, 'Total_Filters'
+    df_latest = df_window.tail(1).copy()
+    df_latest['Close_check'] = label
+
+    # Dynamically derive the fixed structural dimensions
+    direction, momentum = determine_direction_and_momentum(df_latest)
+    df_latest['Direction'] = direction
+    df_latest['Momentum'] = momentum
     
-    # Weak set: 11 filters
-    # - Close is near other H/L then time could be to reverse - Weak
-    # - Rolling MA crosses comparisons for 1 with various and 3/6
-    # - Slopes for sudden jumps
-    df_wk = Filter(df2, ['1m_MA_Filter','3m_MA_Filter','6m_MA_Filter'
-                         ,'MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_1_AT','MA_3_6'
-                        ,'1m_slope','3m_slope','6m_slope'])
+    # Calculate Total Filters across all active features to evaluate signal density
+    filter_columns = [
+        '1m_MA_Filter', '3m_MA_Filter', '6m_MA_Filter', '12m_MA_Filter', 'AT_MA_Filter',
+        'MA_1_3', 'MA_1_6', 'MA_1_12', 'MA_1_AT', 'MA_3_6', 'MA_3_12', 'MA_6_12', 'MA_6_AT', 'MA_12_AT'
+    ]
+    df_latest['Total_Filters'] = df_latest[filter_columns].sum(axis=1)
+
+    output_cols = ['Currency', 'Total_Filters', 'AT_High', 'AT_Low', '<CLOSE>', 'Close_check', 'Direction', 'Momentum']
+
+    # --- Strong Set: Pure Macro Trend confirmation ---
+    # Triggered when macro filters match a structural 'Trend Following' layout
+    is_strong = (df_latest['Momentum'] == 'Trend Following') & (df_latest['Direction'] != 'Neutral')
+    if is_strong.any():
+        df_st = df_latest[output_cols].copy()
+    else:
+        df_st = pd.DataFrame(columns=output_cols)
     
-    df_wk = df_wk [['Currency', 'Total_Filters','AT_High','AT_Low','<CLOSE>','Close_check']].sort_values(by='Total_Filters', ascending=False).reset_index(drop=True) 
-    df_wk = df_wk.drop_duplicates(subset=['Currency'])
+    # --- Weak Set: Pure Overextended Mean Reversion ---
+    # Triggered when micro crosses accumulate while price hits local limits
+    # --- Weak Set: Pure Overextended Mean Reversion ---
+    # FIX: Wrapped (df_latest['Total_Filters'] >= 3) and (df_latest['Momentum'] == 'Neutral') in explicit parentheses
+    is_weak = (df_latest['Momentum'] == 'Mean Reversion') | ((df_latest['Total_Filters'] >= 3) & (df_latest['Momentum'] == 'Neutral'))
+    if is_weak.any():
+        df_wk = df_latest[output_cols].copy()
+    else:
+        df_wk = pd.DataFrame(columns=output_cols)
     
-    return df_st,df_wk
+    return df_st, df_wk
+
 
 #Hurst-exponent for how quickly mean reversion
 def get_hurst(series):
